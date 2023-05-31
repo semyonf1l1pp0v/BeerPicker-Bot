@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-with open("/Users/semenfilippov/Desktop/piv0.html") as file:
+with open("piv0.html") as file:
     src = file.read()
 soup = BeautifulSoup(src, "lxml")
 
