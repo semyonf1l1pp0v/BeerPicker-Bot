@@ -1,7 +1,3 @@
-# import pandas as pd
-# ds = pd.read_html("https://en.wikipedia.org/wiki/List_of_highest-grossing_films")
-# pd.set_option('display.max_columns', None)
-# ds[0].to_excel('movies.xlsx')
 
 from bs4 import BeautifulSoup
 
@@ -9,7 +5,7 @@ with open("/Users/semenfilippov/Desktop/piv0.html") as file:
     src = file.read()
 soup = BeautifulSoup(src, "lxml")
 
-# # GETTING AND PRINTING NAMES
+# # GETTING AND PRINTING beer name
 # # TODO: Use extracted value of volume to fill its column
 # names = soup.find("div", class_="items-container").find_all("p", class_="title")
 #
@@ -25,38 +21,39 @@ soup = BeautifulSoup(src, "lxml")
 
 info = soup.find_all("ul", class_="list-description")
 
-# # GETTING AND PRINTING REGION
+# # GETTING AND PRINTING beer region
 # # TODO: Find out why \n appears (2 times!!!) here and in functions below
 # for el in info:
-#     region = el.find_all("li")
-#     region_corrected = str(region[0].text).split(":")[1:]     # same idea like lines 19-22
-#     region_fin = ''                                           # will also appear in functions below
-#     for reg in region_corrected:
-#         region_fin += reg
-#     print(region_fin)
+#     information = el.find_all("li")
+#     region = str(information[0].text).split(":")[1:]     # same idea like lines 19-22
+#     region_corrected = ''                                           # will also appear in functions below
+#     for reg in region:
+#         region_corrected += reg
+#     print(region_corrected)
 
-# # GETTING AND PRINTING beer_type
+# # GETTING AND PRINTING beer type
 # for el in info:
-#     beer_type = el.find_all("li")
-#     beer_type_corrected = str(beer_type[3].text).split(":")[1:]
-#     beer_type_fin = ''
-#     for reg in beer_type_corrected:
-#         beer_type_fin += reg
-#     print(beer_type_fin)
+#     information = el.find_all("li")
+#     beer_type = str(information[3].text).split(":")[1:]
+#     beer_type_corrected = ''
+#     for ch in beer_type:
+#         beer_type_corrected += ch
+#     print(beer_type_corrected)
 
-# # GETTING AND PRINTING beer_style
+# # GETTING AND PRINTING beer style
 # for el in info:
-#     beer_style = el.find_all("li")
-#     beer_style_corrected = str(beer_style[4].text).split(":")[1:]       # same idea like lines 19-22
-#     beer_style_fin = ''
-#     for reg in beer_style_corrected:
-#         beer_style_fin += reg
-#     print(beer_style_fin)
+#     information = el.find_all("li")
+#     beer_style = str(information[4].text).split(":")[1:]       # same idea like lines 19-22
+#     beer_style_corrected = ''
+#     for ch in beer_style:
+#         beer_style_corrected += ch
+#     print(beer_style_corrected)
 
+# GETTING AND PRINTING beer strength
 for el in info:
-    beer_style = el.find_all("li")
-    beer_style_corrected = str(beer_style[6].text).split(":")[1:]       # same idea like lines 19-22
-    beer_style_fin = ''
-    for reg in beer_style_corrected:
-        beer_style_fin += reg.split("-")[1]
-    print(beer_style_fin)
+    information = el.find_all("li")
+    beer_strength = str(information[6].text).split(":")[1:]       # same idea like lines 19-22
+    beer_strength_corrected = ''
+    for nums in beer_strength:
+        beer_strength_corrected += nums.split("-")[1].replace("%", "")
+    print(beer_strength_corrected)
