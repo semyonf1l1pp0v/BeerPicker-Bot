@@ -1,4 +1,3 @@
-
 from bs4 import BeautifulSoup
 
 with open("/Users/semenfilippov/Desktop/piv0.html") as file:

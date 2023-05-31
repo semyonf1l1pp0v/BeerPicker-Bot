@@ -8,7 +8,7 @@ try:
         password=password,
         database=db_name
     )
-    a = '%Ирландия%'
+
     with connection.cursor() as cursor:
         cursor.execute(
             "select * from beer;"
