@@ -13,22 +13,29 @@ style +
 strength +
 price with discount +
 without discount +
-volume
+volume +
+availability ? (maybe later)
 '''
 
+names = soup.find("div", class_="items-container").find_all("p", class_="title")
+
+# GETTING AND PRINTING beer volume
+for name in names:
+    beer_volume = name.get("data-prodname")
+    beer_volume_corr_dig = str(str(beer_volume).split(",")[-1]).split(' ')[1].split('\n')
+    for digit in beer_volume_corr_dig:
+        if float(digit) > 50.0:
+            digit = float(digit)/1000.0
+        print(float(digit))
+
 # # GETTING AND PRINTING beer name
-# # TODO: Use extracted value of volume to fill its column
-# names = soup.find("div", class_="items-container").find_all("p", class_="title")
-#
 # for name in names:
 #     beer_name = name.get("data-prodname")
-#     print("")
 #     beer_name_corr = str(beer_name).split(",")[0:-1]  # lines: 19-22: delete info about volume,
 #     beer_name_fin = ''                                # like ", 0,44 л"
 #     for s in beer_name_corr:                          # and leave only beer name
 #         beer_name_fin += s
 #     print(beer_name_fin)
-# #
 
 info = soup.find_all("ul", class_="list-description")
 
@@ -36,8 +43,8 @@ info = soup.find_all("ul", class_="list-description")
 # def parse_description(param_num):
 #     for el in info:
 #         information = el.find_all("li")
-#         parameter = str(information[param_num].text).split(":")[1:]  # same idea like lines 19-22
-#         parameter_corrected = ''  # will also appear in functions below
+#         parameter = str(information[param_num].text).split(":")[1:]   # same idea like lines 19-22
+#         parameter_corrected = ''                                      # will also appear in functions below
 #         for par in parameter:
 #             parameter_corrected += par.replace('\n', '')
 #         print(parameter_corrected)
