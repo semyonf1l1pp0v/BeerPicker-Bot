@@ -20,8 +20,7 @@ soup = BeautifulSoup(src, "lxml")
 
 info = soup.find_all("ul", class_="list-description")
 
-
-# GETTING AND PRINTING beer parameter based on variable param_num
+# # GETTING AND PRINTING beer parameter based on variable param_num
 # def parse_description(param_num):
 #     for el in info:
 #         information = el.find_all("li")
@@ -30,8 +29,8 @@ info = soup.find_all("ul", class_="list-description")
 #         for par in parameter:
 #             parameter_corrected += par.replace('\n', '')
 #         print(parameter_corrected)
-
-
+#
+#
 # parse_description(0)  # beer_region
 # parse_description(3)  # beer_type
 # parse_description(4)  # beer_style
@@ -44,3 +43,16 @@ info = soup.find_all("ul", class_="list-description")
 #     for nums in beer_strength:
 #         beer_strength_corrected += nums.split("-")[1].replace("%", "")
 #     print(float(beer_strength_corrected))
+
+left_tablet_price = soup.find_all("div", class_="left-tablet")
+
+def parse_price(http_class, price_class):
+    for el in left_tablet_price:
+        price_old = el.find(http_class, class_=price_class)
+        if price_old:
+            print(int(str(price_old.text)[0:-4]))
+        else:
+            print(int(str(el.find("div", class_="price").text)[0:-4]))
+
+parse_price("div", 'price-old')     # price without discount
+parse_price("div", 'price')         # price with discount
