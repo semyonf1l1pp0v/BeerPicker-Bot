@@ -21,13 +21,12 @@ soup = BeautifulSoup(src, "lxml")
 info = soup.find_all("ul", class_="list-description")
 
 # # GETTING AND PRINTING beer region
-# # TODO: Find out why \n appears (2 times!!!) here and in functions below
 # for el in info:
 #     information = el.find_all("li")
-#     region = str(information[0].text).split(":")[1:]     # same idea like lines 19-22
+#     region = str(information[0].text,).split(":")[1:]     # same idea like lines 19-22
 #     region_corrected = ''                                           # will also appear in functions below
 #     for reg in region:
-#         region_corrected += reg
+#         region_corrected += reg.replace('\n', '')
 #     print(region_corrected)
 
 # # GETTING AND PRINTING beer type
@@ -36,7 +35,7 @@ info = soup.find_all("ul", class_="list-description")
 #     beer_type = str(information[3].text).split(":")[1:]
 #     beer_type_corrected = ''
 #     for ch in beer_type:
-#         beer_type_corrected += ch
+#         beer_type_corrected += ch.replace('\n', '')
 #     print(beer_type_corrected)
 
 # # GETTING AND PRINTING beer style
@@ -45,7 +44,7 @@ info = soup.find_all("ul", class_="list-description")
 #     beer_style = str(information[4].text).split(":")[1:]       # same idea like lines 19-22
 #     beer_style_corrected = ''
 #     for ch in beer_style:
-#         beer_style_corrected += ch
+#         beer_style_corrected += ch.replace('\n', '')
 #     print(beer_style_corrected)
 
 # GETTING AND PRINTING beer strength
@@ -55,4 +54,4 @@ for el in info:
     beer_strength_corrected = ''
     for nums in beer_strength:
         beer_strength_corrected += nums.split("-")[1].replace("%", "")
-    print(beer_strength_corrected)
+    print(float(beer_strength_corrected))
