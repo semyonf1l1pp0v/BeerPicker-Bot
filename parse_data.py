@@ -4,6 +4,18 @@ with open("piv0.html") as file:
     src = file.read()
 soup = BeautifulSoup(src, "lxml")
 
+# TODO:
+'''
+name + 
+region + 
+type + 
+style +
+strength +
+price with discount +
+without discount +
+volume
+'''
+
 # # GETTING AND PRINTING beer name
 # # TODO: Use extracted value of volume to fill its column
 # names = soup.find("div", class_="items-container").find_all("p", class_="title")
@@ -46,13 +58,14 @@ info = soup.find_all("ul", class_="list-description")
 
 left_tablet_price = soup.find_all("div", class_="left-tablet")
 
-def parse_price(http_class, price_class):
-    for el in left_tablet_price:
-        price_old = el.find(http_class, class_=price_class)
-        if price_old:
-            print(int(str(price_old.text)[0:-4]))
-        else:
-            print(int(str(el.find("div", class_="price").text)[0:-4]))
-
-parse_price("div", 'price-old')     # price without discount
-parse_price("div", 'price')         # price with discount
+# # GETTING AND PRINTING beer_price with and without discount
+# def parse_price(http_class, price_class):
+#     for el in left_tablet_price:
+#         price_old = el.find(http_class, class_=price_class)
+#         if price_old:
+#             print(int(str(price_old.text)[0:-4]))
+#         else:
+#             print(int(str(el.find("div", class_="price").text)[0:-4]))
+#
+# parse_price("div", 'price-old')     # price without discount
+# parse_price("div", 'price')         # price with discount
