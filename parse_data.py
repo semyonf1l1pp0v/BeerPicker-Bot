@@ -21,26 +21,32 @@ availability ? (maybe later)
 names = soup.find("div", class_="items-container").find_all("p", class_="title")
 
 
-# GETTING AND PRINTING beer volume
-# def parse_beer_volume():
-#     for name in names:
-#         beer_volume = name.get("data-prodname")
-#         beer_volume_corr_dig = str(str(beer_volume).split(",")[-1]).split(' ')[1].split('\n')
-#         for digit in beer_volume_corr_dig:
-#             if float(digit) > 50.0:
-#                 digit = float(digit) / 1000.0
-#             print(float(digit))
+#GETTING AND PRINTING beer volume
+def parse_beer_volume():
+    volumes = []
+    for name in names:
+        beer_volume = name.get("data-prodname")
+        beer_volume_corr_dig = str(str(beer_volume).split(",")[-1]).split(' ')[1].split('\n')
+        for digit in beer_volume_corr_dig:
+            if float(digit) > 50.0:
+                digit = float(digit) / 1000.0
+            volumes.append(float(digit))
+    return volumes
+
+# print(parse_beer_volume()[4])
 #
-#
-# # GETTING AND PRINTING beer name
-# def parse_beer_name():
-#     for name in names:
-#         beer_name = name.get("data-prodname")
-#         beer_name_corr = str(beer_name).split(",")[0:-1]  # lines: 19-22: delete info about volume,
-#         beer_name_fin = ''  # like ", 0,44 л"
-#         for s in beer_name_corr:  # and leave only beer name
-#             beer_name_fin += s
-#         print(beer_name_fin)
+# GETTING AND PRINTING beer name
+def parse_beer_name():
+    reg = []
+    for name in names:
+        beer_name = name.get("data-prodname")
+        beer_name_corr = str(beer_name).split(",")[0:-1]  # lines: 19-22: delete info about volume,
+        beer_name_fin = ''                                # like ", 0,44 л"
+        for s in beer_name_corr:                          # and leave only beer name
+            beer_name_fin += s
+        reg.append(beer_name_fin)
+    return reg
+
 
 
 info = soup.find_all("ul", class_="list-description")
@@ -58,44 +64,69 @@ def parse_description(param_num):
             descr.append(parameter_corrected)
     return descr
 
-
-print(parse_description(0))  # beer_region
+# print(parse_description(0))  # beer_region
 # parse_description(3)  # beer_type
 # parse_description(4)  # beer_style
 
-# # GETTING AND PRINTING beer strength
-# def parse_beer_strength():
-#     for el in info:
-#         information = el.find_all("li")
-#         beer_strength = str(information[6].text).split(":")[1:]  # same idea like lines 19-22
-#         beer_strength_corrected = ''
-#         for nums in beer_strength:
-#             beer_strength_corrected += nums.split("-")[1].replace("%", "")
-#         print(float(beer_strength_corrected))
+# GETTING AND PRINTING beer strength
+def parse_beer_strength():
+    strengths = []
+    for el in info:
+        information = el.find_all("li")
+        beer_strength = str(information[6].text).split(":")[1:]  # same idea like lines 19-22
+        beer_strength_corrected = ''
+        for nums in beer_strength:
+            beer_strength_corrected += nums.split("-")[1].replace("%", "")
+        strengths.append(float(beer_strength_corrected))
+    return strengths
+
+# print(parse_beer_strength())
 #
 #
-# left_tablet_price = soup.find_all("div", class_="left-tablet")
+left_tablet_price = soup.find_all("div", class_="left-tablet")
 #
 #
 # # GETTING AND PRINTING beer_price with and without discount
-# def parse_price(http_class, price_class):
-#     for el in left_tablet_price:
-#         price_old = el.find(http_class, class_=price_class)
-#         if price_old:
-#             print(int(str(price_old.text)[0:-4]))
-#         else:
-#             print(int(str(el.find("div", class_="price").text)[0:-4]))
-
+def parse_price(http_class, price_class):
+    costs = []
+    for el in left_tablet_price:
+        price_old = el.find(http_class, class_=price_class)
+        if price_old:
+            costs.append(int(str(price_old.text)[0:-4]))
+        else:
+            costs.append(int(str(el.find("div", class_="price").text)[0:-4]))
+    return costs
 
 #
 #
 # parse_price("div", 'price-old')  # price without discount
-# parse_price("div", 'price')  # price with discount
+# print(parse_price("div", 'price'))  # price with discount
+
+# for i in range(len(parse_description(0))):
+#     print(parse_description(0)[i])
 
 def save_data(filename):
-    with open(filename+'.csv', 'w', newline='', encoding='utf-8-sig') as fileout:
-        writer = csv.writer(fileout, delimiter=' ')
-        writer.writerow(("Название", "Тип", "Стиль", "Регион", "Цена со скидкой", "Цена без скидки", "Объем"))
-        writer.writerow(parse_description(0))
+    with open(filename, 'w', encoding='utf-8-sig') as fileout:
+        writer = csv.writer(fileout, delimiter=';')
+        writer.writerow((
+            "Название",
+            "Тип",
+            "Стиль",
+            "Регион",
+            "Крепость",
+            "Цена со скидкой",
+            "Цена без скидки",
+            "Объем"))
+        for i in range(len(parse_beer_name())):
+            writer.writerow((
+                parse_beer_name()[i],
+                parse_description(0)[i],
+                parse_description(3)[i],
+                parse_description(4)[i],
+                parse_beer_strength()[i],
+                parse_price("div", 'price')[i],
+                parse_price("div", 'price-old')[i],
+                parse_beer_volume()[i]
+            ))
 
-save_data('output')
+save_data('output.csv')
