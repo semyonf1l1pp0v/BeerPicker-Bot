@@ -13,7 +13,8 @@ try:
         cursor.execute(
             "select * from beer;"
         )
-        print(cursor.fetchall())
+        data = cursor.fetchall()
+        print('\n'.join(str(e) for e in data))
 
 except Exception as ex:
     print("[INFO] Error while working with PostgreSQL", ex)

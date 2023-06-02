@@ -1,19 +1,20 @@
 drop table if exists beer;
 
-create table public.beer
+create table beer
 (
-    id       serial
+    id         serial
         primary key,
-    name     text             not null,
-    type     integer          not null,
-    style    text             not null,
-    strength double precision not null,
-    volume   double precision not null,
-    cost     integer          not null,
-    region   text             not null
+    name       text  not null,
+    region     text not null,
+    type       text  not null,
+    style      text  not null,
+    strength   float not null,
+    price_disc int   not null,
+    price      int   not null,
+    volume     float not null
 );
 
-alter table public.beer
-    owner to postgres;
+select * from beer;
 
+select * from beer where price_disc < 100 and style like 'Лагер%';
 
