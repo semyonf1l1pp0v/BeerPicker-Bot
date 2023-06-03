@@ -1,4 +1,5 @@
 import random
+import re
 from time import sleep
 
 import requests
@@ -17,19 +18,6 @@ HEADERS = {
 FILENAME = 'output'
 
 
-# req = requests.get(url=URL, headers=HEADERS)
-# soup = BeautifulSoup(req.text, "lxml")
-# names = soup.find("div", class_="items-container").find_all("p", class_="title")
-
-# with open("piv0.html") as file:
-#     src = file.read()
-# soup = BeautifulSoup(src, "lxml")
-#
-# names = soup.find("div", class_="items-container").find_all("p", class_="title")
-
-
-#
-#
 # GETTING beer volume
 def parse_beer_volume(names):
     volumes = []
@@ -43,8 +31,6 @@ def parse_beer_volume(names):
     return volumes
 
 
-#
-#
 # GETTING beer name
 def parse_beer_name(names):
     reg = []
@@ -58,11 +44,6 @@ def parse_beer_name(names):
     return reg
 
 
-#
-#
-# info = soup.find_all("ul", class_="list-description")
-#
-#
 # GETTING beer parameter based on variable param_num
 def parse_description(info, param_num):
     descr = []
@@ -76,40 +57,40 @@ def parse_description(info, param_num):
     return descr
 
 
-# print(parse_description(0))  # beer_region
-# parse_description(3)  # beer_type
-# parse_description(4)  # beer_style
-#
 # GETTING beer strength
 def parse_beer_strength(info):
     strengths = []
     for el in info:
         information = el.find_all("li")
-        beer_strength = str(information[6].text).split(":")[1:]  # same idea like lines 19-22
-        beer_strength_corrected = ''
-        for nums in beer_strength:
-            beer_strength_corrected += nums.split("-")[1].replace("%", "")
-        strengths.append(float(beer_strength_corrected))
+        beer_strength = None
+        for item in information:
+            if "Крепость" in str(item):
+                beer_strength = str(item.text)
+                break
+        if beer_strength is not None:
+            match = re.search(r'\d+(\.\d+)?%', beer_strength)
+            if match:
+                strength = float(match.group(0).rstrip('%'))
+                strengths.append(strength)
+            else:
+                strengths.append(None)
+        else:
+            strengths.append(None)
     return strengths
 
 
-# left_tablet_price = soup.find_all("div", class_="left-tablet")
-#
-#
 # GETTING beer_price with and without discount
 def parse_price(left_tablet_price, http_tag, http_class):
     costs = []
     for el in left_tablet_price:
         price_old = el.find(http_tag, class_=http_class)
         if price_old:
-            costs.append(int(str(price_old.text)[0:-4]))
+            costs.append(int(str(price_old.text).replace(' ', '')[0:-4]))
         else:
-            costs.append(int(str(el.find("div", class_="price").text)[0:-4]))
+            costs.append(int(str(el.find("div", class_="price").text).replace(' ', '')[0:-4]))
     return costs
 
 
-#
-#
 # SAVING data to csv file
 def save_data(filename, name, info, left_tablet_price):
     with open(filename, mode='a', encoding='utf-8-sig') as fileout:
@@ -136,10 +117,13 @@ def parser():
             ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
     for i in range(pages_to_parse):
         print("Парсим страницу №" + str(i + 1))
-        req = requests.get(url=(URL + page + str(i)), headers=HEADERS)
+        req = requests.get(url=(URL + page + str(i + 1)), headers=HEADERS)
         soup = BeautifulSoup(req.text, "lxml")
         names = soup.find("div", class_="items-container").find_all("p", class_="title")
         info = soup.find_all("ul", class_="list-description")
         left_tablet_price = soup.find_all("div", class_="left-tablet")
         save_data(FILENAME + '.csv', names, info, left_tablet_price)
         sleep(random.randrange(2, 4))
+
+
+parser()
