@@ -123,7 +123,7 @@ def parser():
         info = soup.find_all("ul", class_="list-description")
         left_tablet_price = soup.find_all("div", class_="left-tablet")
         save_data(FILENAME + '.csv', names, info, left_tablet_price)
-        sleep(random.randrange(2, 4))
+        sleep(random.randrange(30, 35))
 
 
 parser()
