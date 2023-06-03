@@ -1,25 +1,29 @@
+import ipaddress
+
 import requests
 from bs4 import BeautifulSoup
 import csv
 
 # TODO: parse data from all pages
 
-url = 'https://ya.ru'
+url = 'https://winestyle.ru/beer/all/'
 
 headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 }
 
-req = requests.get(url, headers=headers)
-print(req)
-
+req = requests.get(url=url, headers=headers)
+soup = BeautifulSoup(req.text, "lxml")
+# names = soup.find("div", class_="items-container").find_all("p", class_="title")
 
 # with open("piv0.html") as file:
 #     src = file.read()
 # soup = BeautifulSoup(src, "lxml")
 #
-# names = soup.find("div", class_="items-container").find_all("p", class_="title")
+names = soup.find("div", class_="items-container").find_all("p", class_="title")
+
+
 #
 #
 # # GETTING beer volume
@@ -40,9 +44,9 @@ print(req)
 #     reg = []
 #     for name in names:
 #         beer_name = name.get("data-prodname")
-#         beer_name_corr = str(beer_name).split(",")[0:-1]    # lines: 31-33: delete info about volume,
-#         beer_name_fin = ''                                  # like ", 0,44 л"
-#         for s in beer_name_corr:                            # and leave only beer name
+#         beer_name_corr = str(beer_name).split(",")[0:-1]  # lines: 31-33: delete info about volume,
+#         beer_name_fin = ''  # like ", 0,44 л"
+#         for s in beer_name_corr:  # and leave only beer name
 #             beer_name_fin += s
 #         reg.append(beer_name_fin)
 #     return reg
@@ -100,19 +104,11 @@ print(req)
 # def save_data(filename):
 #     with open(filename, 'w', encoding='utf-8-sig') as fileout:
 #         writer = csv.writer(fileout, delimiter=';')
-#         writer.writerow((
-#             "Id",
-#             "Название",
-#             "Регион",
-#             "Тип",
-#             "Стиль",
-#             "Крепость",
-#             "Цена со скидкой",
-#             "Цена без скидки",
-#             "Объем"))
+#         writer.writerow(
+#             ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
 #         for i in range(len(parse_beer_name())):
 #             writer.writerow((
-#                 i+1,
+#                 # i + 1,
 #                 parse_beer_name()[i],
 #                 parse_description(0)[i],
 #                 parse_description(3)[i],
@@ -125,3 +121,13 @@ print(req)
 #
 #
 # save_data('output.csv')
+
+def parser():
+    page = '?page='
+    for i in range(304):
+        req = requests.get(url=url + page + str(i), headers=headers)
+        soup = BeautifulSoup(req.text, "lxml")
+        names = soup.find("div", class_="items-container").find_all("p", class_="title")
+        info = soup.find_all("ul", class_="list-description")
+        # left_tablet_price = soup.find_all("div", class_="left-tablet")
+        print(url + page + str(i + 1))

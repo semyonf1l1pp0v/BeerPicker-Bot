@@ -16,5 +16,5 @@ create table beer
 
 select * from beer;
 
-select * from beer where price_disc < 100 and style like 'Лагер%';
+select region, count(region) from beer group by region order by 2 desc;
 
