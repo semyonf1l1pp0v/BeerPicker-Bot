@@ -111,19 +111,31 @@ def save_data(filename, name, info, left_tablet_price):
 def parser():
     pages_to_parse = int(input("Сколько страниц будем парсить?: "))
     page = '?page='
+    p_list = []
+
+    with open(file='/Users/semenfilippov/Desktop/http_proxies.txt', mode='r') as file:
+        for line in file:
+            p_list.append(line.strip())
+
     with open(FILENAME + '.csv', mode='w', encoding='utf-8-sig') as fileout:
         writer = csv.writer(fileout, delimiter=';')
         writer.writerow(
             ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
+
     for i in range(pages_to_parse):
         print("Парсим страницу №" + str(i + 1))
-        req = requests.get(url=(URL + page + str(i + 1)), headers=HEADERS)
+
+        proxies = {
+            'https': 'http://' + str(p_list[random.randint(0, len(p_list))])
+        }
+
+        req = requests.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=proxies)
         soup = BeautifulSoup(req.text, "lxml")
         names = soup.find("div", class_="items-container").find_all("p", class_="title")
         info = soup.find_all("ul", class_="list-description")
         left_tablet_price = soup.find_all("div", class_="left-tablet")
         save_data(FILENAME + '.csv', names, info, left_tablet_price)
-        sleep(random.randrange(30, 35))
+        sleep(random.randrange(3, 4))
 
 
 parser()
