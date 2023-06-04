@@ -108,34 +108,49 @@ def save_data(filename, name, info, left_tablet_price):
             ))
 
 
-def parser():
-    pages_to_parse = int(input("Сколько страниц будем парсить?: "))
-    page = '?page='
-    p_list = []
-
+def get_proxy_list(p_list):
     with open(file='/Users/semenfilippov/Desktop/http_proxies.txt', mode='r') as file:
         for line in file:
             p_list.append(line.strip())
 
-    with open(FILENAME + '.csv', mode='w', encoding='utf-8-sig') as fileout:
+
+def print_output_headers(filename):
+    with open(filename + '.csv', mode='w', encoding='utf-8-sig') as fileout:
         writer = csv.writer(fileout, delimiter=';')
         writer.writerow(
             ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
 
+
+def parser():
+    pages_to_parse = int(input("Сколько страниц будем парсить?: "))
+    page = '?page='
+    p_list = []
+    get_proxy_list(p_list=p_list)
+    print_output_headers(filename=FILENAME)
     for i in range(pages_to_parse):
         print("Парсим страницу №" + str(i + 1))
 
-        proxies = {
-            'https': 'http://' + str(p_list[random.randint(0, len(p_list))])
-        }
-
-        req = requests.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=proxies)
-        soup = BeautifulSoup(req.text, "lxml")
-        names = soup.find("div", class_="items-container").find_all("p", class_="title")
-        info = soup.find_all("ul", class_="list-description")
-        left_tablet_price = soup.find_all("div", class_="left-tablet")
-        save_data(FILENAME + '.csv', names, info, left_tablet_price)
-        sleep(random.randrange(3, 4))
+        while True:
+            try:
+                with requests.Session() as session:
+                    proxies = {
+                        'https': 'http://' + str(p_list[random.randint(0, len(p_list) - 1)])
+                    }
+                    req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=proxies, timeout=10)
+                    soup = BeautifulSoup(req.text, "lxml")
+                    names = soup.find("div", class_="items-container").find_all("p", class_="title")
+                    info = soup.find_all("ul", class_="list-description")
+                    left_tablet_price = soup.find_all("div", class_="left-tablet")
+                    save_data(FILENAME + '.csv', names, info, left_tablet_price)
+                    print("Спарсили страницу №" + str(i + 1))
+                    break
+            except requests.exceptions.ProxyError:
+                print("\nНе удалось подключиться к прокси-серверу, попробуем другой\n")
+            except requests.exceptions.ConnectionError:
+                print("\nНе удалось подключиться к прокси-серверу, попробуем другой\n")
+            except requests.exceptions.ReadTimeout:
+                print("\nПревышен таймаут подключения к серверу, попробуем другой\n")
+            sleep(random.randrange(30, 35))
 
 
 parser()
