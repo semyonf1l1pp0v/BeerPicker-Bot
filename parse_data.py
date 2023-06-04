@@ -85,9 +85,9 @@ def parse_price(left_tablet_price, http_tag, http_class):
     for el in left_tablet_price:
         price_old = el.find(http_tag, class_=http_class)
         if price_old:
-            costs.append(int(str(str(price_old.text).replace(' ', '')[0:-4]).replace('-', '0')))  # beer with no price
+            costs.append(int(str(str(price_old.text).replace(' ', '')[0:-4]).replace('—', '0')))  # beer with no price
         else:
-            costs.append(int(str(str(el.find("div", class_="price").text).replace(' ', '')[0:-4]).replace('-', '0')))
+            costs.append(int(str(str(el.find("div", class_="price").text).replace(' ', '')[0:-4]).replace('—', '0')))
     return costs
 
 
@@ -150,7 +150,7 @@ def parser():
                 print("\nНе удалось подключиться к прокси-серверу, попробуем другой\n")
             except requests.exceptions.ReadTimeout:
                 print("\nПревышен таймаут подключения к серверу, попробуем другой\n")
-            sleep(random.randrange(30, 35))
+            sleep(random.randrange(3, 5))
 
 
 parser()
