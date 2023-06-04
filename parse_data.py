@@ -44,16 +44,15 @@ def parse_beer_name(names):
     return reg
 
 
-# GETTING beer parameter based on variable param_num
-def parse_description(info, param_num):
-    descr = []
-    for el in info:
-        information = el.find_all("li")
-        parameter = str(information[param_num].text).split(":")[1:]  # same idea like lines 19-22
-        parameter_corrected = ''  # will also appear in functions below
-        for par in parameter:
-            parameter_corrected += par.replace('\n', '')
-            descr.append(parameter_corrected)
+# GETTING beer parameter based on variable
+def parse_description(soup, info):
+    information = soup.find_all("li")
+    descr = ""
+    for item in information:
+        name = item.find("span", class_="name")
+        if name and name.text.strip() == info:
+            descr_links = item.find_all("a")
+            descr = ", ".join(link.text for link in descr_links)
     return descr
 
 
@@ -92,19 +91,19 @@ def parse_price(left_tablet_price, http_tag, http_class):
 
 
 # SAVING data to csv file
-def save_data(filename, name, info, left_tablet_price):
+def save_data(filename, names, info_list, left_tablet_price):
     with open(filename, mode='a', encoding='utf-8-sig') as fileout:
         writer = csv.writer(fileout, delimiter=';')
-        for i in range(len(parse_beer_name(names=name))):
+        for i, name in enumerate(parse_beer_name(names)):
             writer.writerow((
-                parse_beer_name(names=name)[i],
-                parse_description(info=info, param_num=0)[i],
-                parse_description(info=info, param_num=3)[i],
-                parse_description(info=info, param_num=4)[i],
-                parse_beer_strength(info=info)[i],
+                name,
+                parse_description(soup=BeautifulSoup(str(info_list[i]), "html.parser"), info="Регион:"),
+                parse_description(soup=BeautifulSoup(str(info_list[i]), "html.parser"), info="Пиво:"),
+                parse_description(soup=BeautifulSoup(str(info_list[i]), "html.parser"), info="Стиль:"),
+                parse_beer_strength(info=info_list)[i],
                 parse_price(left_tablet_price=left_tablet_price, http_tag="div", http_class='price')[i],
                 parse_price(left_tablet_price=left_tablet_price, http_tag="div", http_class='price-old')[i],
-                parse_beer_volume(names=name)[i]
+                parse_beer_volume(names)[i]
             ))
 
 
@@ -150,7 +149,11 @@ def parser():
                 print("\nНе удалось подключиться к прокси-серверу, попробуем другой\n")
             except requests.exceptions.ReadTimeout:
                 print("\nПревышен таймаут подключения к серверу, попробуем другой\n")
-            sleep(random.randrange(3, 5))
+            except AttributeError:
+                print("\nАйпишник в бане :с\n")
+            except requests.exceptions.InvalidProxyURL:
+                print("Сервер помер")
+            sleep(random.randrange(10, 15))
 
 
 parser()
