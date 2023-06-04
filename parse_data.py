@@ -85,9 +85,9 @@ def parse_price(left_tablet_price, http_tag, http_class):
     for el in left_tablet_price:
         price_old = el.find(http_tag, class_=http_class)
         if price_old:
-            costs.append(int(str(price_old.text).replace(' ', '')[0:-4]))
+            costs.append(int(str(str(price_old.text).replace(' ', '')[0:-4]).replace('-', '0')))  # beer with no price
         else:
-            costs.append(int(str(el.find("div", class_="price").text).replace(' ', '')[0:-4]))
+            costs.append(int(str(str(el.find("div", class_="price").text).replace(' ', '')[0:-4]).replace('-', '0')))
     return costs
 
 
