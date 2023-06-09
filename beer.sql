@@ -14,7 +14,7 @@ create table beer
     volume     float not null
 );
 
-select * from beer where volume > 1;
+select count(*) from beer;
 
-select region, count(region) from beer group by region order by 2 desc;
+select * from beer where name like '%Moretti%'
 

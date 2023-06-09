@@ -107,12 +107,6 @@ def save_data(filename, names, info_list, left_tablet_price):
             ))
 
 
-def get_proxy_list(p_list):
-    with open(file='/Users/semenfilippov/Desktop/http_proxies.txt', mode='r') as file:
-        for line in file:
-            p_list.append(line.strip())
-
-
 def print_output_headers(filename):
     with open(filename + '.csv', mode='w', encoding='utf-8-sig') as fileout:
         writer = csv.writer(fileout, delimiter=';')
@@ -123,8 +117,6 @@ def print_output_headers(filename):
 def parser():
     pages_to_parse = int(input("Сколько страниц будем парсить?: "))
     page = '?page='
-    p_list = []
-    get_proxy_list(p_list=p_list)
     print_output_headers(filename=FILENAME)
     for i in range(pages_to_parse):
         print("Парсим страницу №" + str(i + 1))
@@ -132,10 +124,9 @@ def parser():
         while True:
             try:
                 with requests.Session() as session:
-                    proxies = {
-                        'https': 'http://' + str(p_list[random.randint(0, len(p_list) - 1)])
-                    }
-                    req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=proxies, timeout=10)
+                    proxyTor = "socks5://127.0.0.1:" + str(random.randint(9052, 9109))
+                    optionsProxy = {"https": proxyTor}
+                    req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=optionsProxy, timeout=10)
                     soup = BeautifulSoup(req.text, "lxml")
                     names = soup.find("div", class_="items-container").find_all("p", class_="title")
                     info = soup.find_all("ul", class_="list-description")
@@ -153,7 +144,7 @@ def parser():
                 print("\nАйпишник в бане :с\n")
             except requests.exceptions.InvalidProxyURL:
                 print("Сервер помер")
-            sleep(random.randrange(10, 15))
+            sleep(random.randrange(5, 10))
 
 
 parser()
