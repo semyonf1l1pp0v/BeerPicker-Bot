@@ -6,8 +6,6 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
-# TODO: parse data from all pages
-
 URL = 'https://winestyle.ru/beer/all/'
 
 HEADERS = {
@@ -116,6 +114,14 @@ def print_output_headers(filename):
         writer.writerow(
             ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
 
+# TODO: get count of pages with request for future automation
+# with requests.Session() as session:
+#     req = session.get(url=URL, headers=HEADERS, proxies=optionsProxy, timeout=10)
+# soup = BeautifulSoup(req.text, "lxml")
+# beer_count_soup = soup.find("div", class_="main-title-container").find("span", class_="small").text
+# beer_count = int(beer_count_soup.strip().split(' ')[-1])
+# print(beer_count) // to get total count of beer, divide it by 20 and get num of pages
+
 
 def parser():
     pages_to_parse = int(input("Сколько страниц будем парсить?: "))
@@ -127,9 +133,9 @@ def parser():
         while True:
             try:
                 with requests.Session() as session:
-                    proxyTor = "socks5://127.0.0.1:" + str(random.randint(9052, 9139))
-                    optionsProxy = {"https": proxyTor}
-                    req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=optionsProxy, timeout=10)
+                    proxy_tor = "socks5://127.0.0.1:" + str(random.randint(9052, 9139))
+                    proxies = {"https": proxy_tor}
+                    req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=proxies, timeout=10)
                     soup = BeautifulSoup(req.text, "lxml")
                     names = soup.find("div", class_="items-container").find_all("p", class_="title")
                     info = soup.find_all("ul", class_="list-description")
