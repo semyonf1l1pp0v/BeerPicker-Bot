@@ -16,5 +16,5 @@ create table beer
 
 select count(*) from beer;
 
-select * from beer where name like '%Moretti%'
+select * from beer where name like '%Балтика%'
 

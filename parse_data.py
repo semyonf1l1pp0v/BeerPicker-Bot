@@ -25,9 +25,12 @@ def parse_beer_volume(names):
         beer_volume = name.get("data-prodname")
         beer_volume_corr_dig = str(str(beer_volume).split(",")[-1]).split(' ')[1].split('\n')
         for digit in beer_volume_corr_dig:
-            if float(digit) > 50.0:
-                digit = float(digit) / 1000.0
-            volumes.append(float(digit))
+            try:
+                if float(digit) > 50.0:
+                    digit = float(digit) / 1000.0
+                volumes.append(float(digit))
+            except ValueError:
+                volumes.append(0)
     return volumes
 
 
@@ -124,7 +127,7 @@ def parser():
         while True:
             try:
                 with requests.Session() as session:
-                    proxyTor = "socks5://127.0.0.1:" + str(random.randint(9052, 9109))
+                    proxyTor = "socks5://127.0.0.1:" + str(random.randint(9052, 9139))
                     optionsProxy = {"https": proxyTor}
                     req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=optionsProxy, timeout=10)
                     soup = BeautifulSoup(req.text, "lxml")
@@ -144,7 +147,7 @@ def parser():
                 print("\nАйпишник в бане :с\n")
             except requests.exceptions.InvalidProxyURL:
                 print("Сервер помер")
-            sleep(random.randrange(5, 10))
+            sleep(random.randrange(4, 6))
 
 
 parser()
