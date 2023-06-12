@@ -98,9 +98,9 @@ def save_data(filename, names, info_list, left_tablet_price):
         for i, name in enumerate(parse_beer_name(names)):
             writer.writerow((
                 name,
-                parse_description(soup=BeautifulSoup(str(info_list[i]), "html.parser"), info="Регион:"),
-                parse_description(soup=BeautifulSoup(str(info_list[i]), "html.parser"), info="Пиво:"),
-                parse_description(soup=BeautifulSoup(str(info_list[i]), "html.parser"), info="Стиль:"),
+                parse_description(soup=BeautifulSoup(str(info_list[i]), "lxml"), info="Регион:"),
+                parse_description(soup=BeautifulSoup(str(info_list[i]), "lxml"), info="Пиво:"),
+                parse_description(soup=BeautifulSoup(str(info_list[i]), "lxml"), info="Стиль:"),
                 parse_beer_strength(info=info_list)[i],
                 parse_price(left_tablet_price=left_tablet_price, http_tag="div", http_class='price')[i],
                 parse_price(left_tablet_price=left_tablet_price, http_tag="div", http_class='price-old')[i],
