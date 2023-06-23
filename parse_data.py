@@ -53,7 +53,7 @@ def parse_description(soup, info):
         name = item.find("span", class_="name")
         if name and name.text.strip() == info:
             descr_links = item.find_all("a")
-            descr = ", ".join(link.text for link in descr_links)
+            descr = ", ".join(str(link.text).lower() for link in descr_links)
     return descr
 
 
