@@ -114,17 +114,18 @@ def print_output_headers(filename):
         writer.writerow(
             ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
 
-# TODO: get count of pages with request for future automation
-# with requests.Session() as session:
-#     req = session.get(url=URL, headers=HEADERS, proxies=optionsProxy, timeout=10)
-# soup = BeautifulSoup(req.text, "lxml")
-# beer_count_soup = soup.find("div", class_="main-title-container").find("span", class_="small").text
-# beer_count = int(beer_count_soup.strip().split(' ')[-1])
-# print(beer_count) // to get total count of beer, divide it by 20 and get num of pages
+
+def get_pages_count():
+    with requests.Session() as session:
+        req = session.get(url=URL, headers=HEADERS)
+    soup = BeautifulSoup(req.text, "lxml")
+    beer_count_soup = soup.find("div", class_="main-title-container").find("span", class_="small").text
+    beer_count = int(beer_count_soup.strip().split(' ')[-1])
+    return beer_count // 20 + 1
 
 
 def parser():
-    pages_to_parse = int(input("Сколько страниц будем парсить?: "))
+    pages_to_parse = get_pages_count()
     page = '?page='
     print_output_headers(filename=FILENAME)
     for i in range(pages_to_parse):
@@ -157,4 +158,3 @@ def parser():
 
 
 parser()
-# YEAAAAAH I GOT IT
