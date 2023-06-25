@@ -15,7 +15,7 @@ def collect_beer(beer_region, beer_type, beer_price_low, beer_price_high):
             cursor.execute(
                 f"select * from beer where region like '%{beer_region}%' and \
                 type like '%{beer_type}%' and (price between {beer_price_low} and {beer_price_high} \
-                or price_disc between {beer_price_low} and {beer_price_high}) limit 3;"
+                or price_disc between {beer_price_low} and {beer_price_high});"
             )
             data = cursor.fetchall()
 
