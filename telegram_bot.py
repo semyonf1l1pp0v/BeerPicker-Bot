@@ -12,7 +12,7 @@ from connection import collect_beer
 # TODO:
 '''
 1) Take care of all user input exceptions
-2) __name__ == __main__ for parser.py
+2) __name__ == __main__ for parser.py + 
 3) Split telegram_bot.py in 4? (states.py + , handlers.py ?, exceptions.py, main.py ?)
 '''
 

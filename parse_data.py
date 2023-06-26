@@ -157,4 +157,9 @@ def parser():
             sleep(random.randrange(4, 6))
 
 
-parser()
+def main():
+    parser()
+
+
+if __name__ == '__main__':
+    main()
