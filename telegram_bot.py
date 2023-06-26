@@ -85,7 +85,10 @@ async def get_user_beer_price_high(message: types.Message, state: FSMContext):
     beer_price_low = data.get("beer_price_low")
     beer_price_high = data.get("beer_price_high")
 
-    call = collect_beer(region, beer_type, beer_style, beer_price_low, beer_price_high)
+    await message.answer(f"Рекомендаций по вашему запросу: "
+          f"{collect_beer('count(*)', region, beer_type, beer_style, beer_price_low, beer_price_high)[0][0]}")
+
+    call = collect_beer('*', region, beer_type, beer_style, beer_price_low, beer_price_high)
     for i in range(len(call)):
         beer_card = f"Название: {hbold(call[i][1])}\n" \
                     f"Регион: {call[i][2]}\n" \
