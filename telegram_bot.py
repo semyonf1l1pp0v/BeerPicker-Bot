@@ -1,25 +1,24 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.markdown import hbold
-from config import token
-from connection import collect_beer
 import random
 from time import sleep
+from states import *
+from config import token
+from connection import collect_beer
+
+
+# TODO:
+'''
+1) Take care of all user input exceptions
+2) __name__ == __main__ for parser.py
+3) Split telegram_bot.py in 4? (states.py + , handlers.py ?, exceptions.py, main.py ?)
+'''
 
 bot = Bot(token=token, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot=bot, storage=storage)
-
-
-# States for UserInput
-class UserInput(StatesGroup):
-    waiting_for_region_input = State()
-    waiting_for_type_input = State()
-    waiting_for_style_input = State()
-    waiting_for_price_low_input = State()
-    waiting_for_price_high_input = State()
 
 
 # Command /start to say hello and start interacting
