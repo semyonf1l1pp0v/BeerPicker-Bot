@@ -35,7 +35,7 @@ async def start(message: types.Message):
 # Wait for user to write beer region
 @dp.message_handler(state=UserInput.waiting_for_region_input)
 async def get_user_beer_region(message: types.Message, state: FSMContext):
-    beer_region = message.text.strip().lower()
+    beer_region = message.text.replace(' ', '').lower()
     await UserInput.next()
     await message.answer("Отлично, идем дальше...")
     await state.update_data(beer_region=beer_region)
@@ -47,7 +47,7 @@ async def get_user_beer_region(message: types.Message, state: FSMContext):
 # Wait for user to write beer style
 @dp.message_handler(state=UserInput.waiting_for_type_input)
 async def get_user_beer_type(message: types.Message, state: FSMContext):
-    beer_type = message.text.strip().lower() if message.text.strip().lower() == "светлое" else "темное"
+    beer_type = message.text.replace(' ', '').lower()
     await UserInput.next()
     await message.answer("Принято. Осталось совсем немного!")
     await state.update_data(beer_type=beer_type)
@@ -59,7 +59,7 @@ async def get_user_beer_type(message: types.Message, state: FSMContext):
 # Wait for user to write beer type
 @dp.message_handler(state=UserInput.waiting_for_style_input)
 async def get_user_beer_style(message: types.Message, state: FSMContext):
-    beer_style = message.text.strip().lower()
+    beer_style = message.text.replace(' ', '').lower()
     await UserInput.next()
     await state.update_data(beer_style=beer_style)
     await message.answer("Мы уже на финишной прямой нашего пивного забега...")
@@ -101,7 +101,7 @@ async def get_user_beer_price_high(message: types.Message, state: FSMContext):
         await message.answer(f"Рекомендаций по вашему запросу: "
                              f"{collect_beer('count(*)', region, beer_type, beer_style, low, high)[0][0]}")
 
-        call = collect_beer('*', region, beer_type, beer_style, beer_price_low, beer_price_high)
+        call = collect_beer('*', region, beer_type, beer_style, low, high)
         for i in range(len(call)):
             beer_card = f"Название: {hbold(call[i][1])}\n" \
                         f"Регион: {call[i][2]}\n" \
