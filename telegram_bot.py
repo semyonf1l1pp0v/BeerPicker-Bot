@@ -35,7 +35,8 @@ async def analyze_text_data(message):
 @dp.message_handler(commands="start")
 async def start(message: types.Message):
     await UserInput.waiting_for_region_input.set()
-    await message.answer("Добрый вечерочек. Давайте подберем пиво для вас!")
+    await message.answer(f"Привет. Прямо сейчас в нашей базе содержится \
+6059 разновидностей пива. Давайте подберем пиво для вас!")
     sleep(2)
     await bot.send_message(message.chat.id,
                            "Введите регион (Германия, Россия, ...)\nНе важно? Так и напишите:")
@@ -118,7 +119,7 @@ async def get_user_beer_price_high(message: types.Message, state: FSMContext):
 
         await message.answer(beer_card)
         sleep(1)
-        await message.answer("Для того, чтобы попробовать снова, введите '/start'")
+    await message.answer("Для того, чтобы попробовать снова, введите '/start'")
 
 
 def main():
