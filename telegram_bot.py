@@ -25,43 +25,50 @@ dp = Dispatcher(bot=bot, storage=storage)
 @dp.message_handler(commands="start")
 async def start(message: types.Message):
     await UserInput.waiting_for_region_input.set()
-    await message.answer("Добрый вечерочек. Давайте подберем пивчик для вас!")
+    await message.answer("Добрый вечерочек. Давайте подберем пиво для вас!")
     sleep(random.randint(1, 2))
     await bot.send_message(message.chat.id,
-                           "Итак, для начала нужно определиться с регионом (Германия, Россия...)\nВведите регион:")
+                           "Введите регион (Германия, Россия, ...)\nНе важно? Так и напишите:")
 
 
 # Wait for user to write beer region
 @dp.message_handler(state=UserInput.waiting_for_region_input)
 async def get_user_beer_region(message: types.Message, state: FSMContext):
-    beer_region = message.text.replace(' ', '').lower()
+    if message.text.replace(' ', '').lower() == "неважно":
+        beer_region = ''
+    else:
+        beer_region = message.text.replace(' ', '').lower()
     await UserInput.next()
-    await message.answer("Отлично, идем дальше...")
     await state.update_data(beer_region=beer_region)
     sleep(random.randint(1, 2))
     await bot.send_message(message.chat.id,
-                           "Хорошо, следующий вопрос: светлое или темное?\nВаш выбор:")
+                           "Хорошо, следующий вопрос: светлое или темное (или не важно?)\nВаш выбор:")
 
 
 # Wait for user to write beer style
 @dp.message_handler(state=UserInput.waiting_for_type_input)
 async def get_user_beer_type(message: types.Message, state: FSMContext):
-    beer_type = message.text.replace(' ', '').lower()
+    if message.text.replace(' ', '').lower() == "неважно":
+        beer_type = ''
+    else:
+        beer_type = message.text.replace(' ', '').lower()
     await UserInput.next()
     await message.answer("Принято. Осталось совсем немного!")
     await state.update_data(beer_type=beer_type)
     sleep(random.randint(1, 2))
     await bot.send_message(message.chat.id,
-                           "Глобально пиво можно разделить на три категории: эль, лагер или смешанное\nЧто предпочтете сегодня?:")
+                           "Эль? Лагер? Может быть смешанное? А может все равно (не важно)?\nВыбирайте:")
 
 
 # Wait for user to write beer type
 @dp.message_handler(state=UserInput.waiting_for_style_input)
 async def get_user_beer_style(message: types.Message, state: FSMContext):
-    beer_style = message.text.replace(' ', '').lower()
+    if message.text.replace(' ', '').lower() == "неважно":
+        beer_style = ''
+    else:
+        beer_style = message.text.replace(' ', '').lower()
     await UserInput.next()
     await state.update_data(beer_style=beer_style)
-    await message.answer("Мы уже на финишной прямой нашего пивного забега...")
     sleep(random.randint(1, 2))
     await bot.send_message(message.chat.id, "Введите минимальную сумму, которую вы готовы потратить (только число):")
 
@@ -83,7 +90,6 @@ async def get_user_beer_price_high(message: types.Message, state: FSMContext):
     await state.update_data(beer_price_high=beer_price_high)
 
     await bot.send_message(message.chat.id, "Щас посмотрим че у нас тут есть")
-    sleep(random.randint(1, 2))
     data = await state.get_data()
 
     region = data.get("beer_region")
@@ -99,7 +105,7 @@ async def get_user_beer_price_high(message: types.Message, state: FSMContext):
     else:
         await message.answer(f"Рекомендаций по вашему запросу: "
                              f"{collect_beer('count(*)', region, beer_type, beer_style, low, high)[0][0]}")
-
+        sleep(random.randint(1, 2))
         call = collect_beer('*', region, beer_type, beer_style, low, high)
         for i in range(len(call)):
             beer_card = f"Название: {hbold(call[i][1])}\n" \
@@ -109,7 +115,8 @@ async def get_user_beer_price_high(message: types.Message, state: FSMContext):
                         f"Крепость: {call[i][5]}\n" \
                         f"Цена со скидкой: {call[i][6]}\n" \
                         f"Цена без скидки: {call[i][7]}\n" \
-                        f"Объем: {call[i][8]}\n"
+                        f"Объем: {call[i][8]}\n" \
+                        f"Изображение: {call[i][9]}\n"
 
             await message.answer(beer_card)
 

@@ -11,7 +11,8 @@ create table beer
     strength   float not null,
     price_disc int   not null,
     price      int   not null,
-    volume     float not null
+    volume     float not null,
+    image      text not null
 );
 
 select count(*) from beer;

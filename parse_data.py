@@ -91,8 +91,16 @@ def parse_price(left_tablet_price, http_tag, http_class):
     return costs
 
 
+def parse_image_link(links):
+    links_list = []
+    for link in links:
+        links_list.append(link.find("img").get("src"))
+    return links_list
+
+
+
 # SAVING data to csv file
-def save_data(filename, names, info_list, left_tablet_price):
+def save_data(filename, names, info_list, left_tablet_price, image_link):
     with open(filename, mode='a', encoding='utf-8-sig') as fileout:
         writer = csv.writer(fileout, delimiter=';')
         for i, name in enumerate(parse_beer_name(names)):
@@ -104,7 +112,8 @@ def save_data(filename, names, info_list, left_tablet_price):
                 parse_beer_strength(info=info_list)[i],
                 parse_price(left_tablet_price=left_tablet_price, http_tag="div", http_class='price')[i],
                 parse_price(left_tablet_price=left_tablet_price, http_tag="div", http_class='price-old')[i],
-                parse_beer_volume(names)[i]
+                parse_beer_volume(names)[i],
+                parse_image_link(image_link)[i]
             ))
 
 
@@ -112,7 +121,7 @@ def print_output_headers(filename):
     with open(filename + '.csv', mode='w', encoding='utf-8-sig') as fileout:
         writer = csv.writer(fileout, delimiter=';')
         writer.writerow(
-            ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем"))
+            ("Название", "Регион", "Тип", "Стиль", "Крепость", "Цена со скидкой", "Цена без скидки", "Объем", "Изображение"))
 
 
 def get_pages_count():
@@ -141,7 +150,8 @@ def parser():
                     names = soup.find("div", class_="items-container").find_all("p", class_="title")
                     info = soup.find_all("ul", class_="list-description")
                     left_tablet_price = soup.find_all("div", class_="left-tablet")
-                    save_data(FILENAME + '.csv', names, info, left_tablet_price)
+                    image_links = soup.find_all("a", class_="img-block")
+                    save_data(FILENAME + '.csv', names, info, left_tablet_price, image_links)
                     print("Спарсили страницу №" + str(i + 1))
                     break
             except requests.exceptions.ProxyError:
