@@ -72,7 +72,7 @@ async def get_user_beer_style(message: types.Message, state: FSMContext):
 # Wait for user to write low beer price
 @dp.message_handler(state=UserInput.waiting_for_price_low_input)
 async def get_user_beer_price_low(message: types.Message, state: FSMContext):
-    beer_price_low = message.text
+    beer_price_low = int(message.text)
     await UserInput.next()
     await state.update_data(beer_price_low=beer_price_low)
     await message.answer("А теперь введите максимальную сумму:")
@@ -81,7 +81,7 @@ async def get_user_beer_price_low(message: types.Message, state: FSMContext):
 # Wait for user to write high beer price and then give recommendations
 @dp.message_handler(state=UserInput.waiting_for_price_high_input)
 async def get_user_beer_price_high(message: types.Message, state: FSMContext):
-    beer_price_high = message.text
+    beer_price_high = int(message.text)
     await UserInput.next()
     await state.update_data(beer_price_high=beer_price_high)
 
