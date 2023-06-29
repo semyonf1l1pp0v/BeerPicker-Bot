@@ -98,7 +98,6 @@ def parse_image_link(links):
     return links_list
 
 
-
 # SAVING data to csv file
 def save_data(filename, names, info_list, left_tablet_price, image_link):
     with open(filename, mode='a', encoding='utf-8-sig') as fileout:
@@ -138,12 +137,11 @@ def parser():
     page = '?page='
     print_output_headers(filename=FILENAME)
     for i in range(pages_to_parse):
-        print("Парсим страницу №" + str(i + 1))
-
+        print(f"Парсим страницу №{i+1}")
         while True:
             try:
                 with requests.Session() as session:
-                    proxy_tor = "socks5://127.0.0.1:" + str(random.randint(9052, 9139))
+                    proxy_tor = f"socks5://127.0.0.1:{random.randint(9052, 9139)}"
                     proxies = {"https": proxy_tor}
                     req = session.get(url=(URL + page + str(i + 1)), headers=HEADERS, proxies=proxies, timeout=10)
                     soup = BeautifulSoup(req.text, "lxml")
@@ -152,18 +150,11 @@ def parser():
                     left_tablet_price = soup.find_all("div", class_="left-tablet")
                     image_links = soup.find_all("a", class_="img-block")
                     save_data(FILENAME + '.csv', names, info, left_tablet_price, image_links)
-                    print("Спарсили страницу №" + str(i + 1))
+                    print(f"Спарсили страницу №{i+1}")
                     break
-            except requests.exceptions.ProxyError:
+            except (requests.exceptions.ProxyError, requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout,
+                    AttributeError):
                 print("\nНе удалось подключиться к прокси-серверу, попробуем другой\n")
-            except requests.exceptions.ConnectionError:
-                print("\nНе удалось подключиться к прокси-серверу, попробуем другой\n")
-            except requests.exceptions.ReadTimeout:
-                print("\nПревышен таймаут подключения к серверу, попробуем другой\n")
-            except AttributeError:
-                print("\nАйпишник в бане :с\n")
-            except requests.exceptions.InvalidProxyURL:
-                print("Сервер помер")
             sleep(random.randrange(4, 6))
 
 
